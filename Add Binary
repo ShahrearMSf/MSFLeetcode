@@ -1,0 +1,29 @@
+char * addBinary(char * a, char * b){
+ int len_a = strlen(a);
+    int len_b = strlen(b);
+    int max_len = len_a > len_b ? len_a : len_b;
+    char* result = (char*)malloc((max_len + 2) * sizeof(char));  // +2 for sum and potential carry
+    result[max_len + 1] = '\0';  // Null-terminate the result string
+    
+    int carry = 0;
+    int i = len_a - 1;
+    int j = len_b - 1;
+    int k = max_len;  // Index for the result array
+    
+    while (i >= 0 || j >= 0 || carry) {
+        int digit_a = (i >= 0) ? (a[i--] - '0') : 0;
+        int digit_b = (j >= 0) ? (b[j--] - '0') : 0;
+        
+        int sum = digit_a + digit_b + carry;
+        carry = sum / 2;
+        sum %= 2;
+        
+        result[k--] = sum + '0';
+    }
+    
+    // Check if there's a leading carry
+    if (carry)
+        result[k--] = carry + '0';
+    
+    return &result[k + 1];
+}
