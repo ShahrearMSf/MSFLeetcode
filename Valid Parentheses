@@ -1,0 +1,23 @@
+bool isValid(char * s){
+int len = strlen(s);
+    char stack[len];
+    int top = -1;
+
+    for (int i = 0; i < len; i++) {
+        if (s[i] == '(' || s[i] == '{' || s[i] == '[') {
+            stack[++top] = s[i];
+        } else {
+            if (top == -1) {
+                return false; // Unmatched closing bracket
+            }
+            if ((s[i] == ')' && stack[top] != '(') ||
+                (s[i] == '}' && stack[top] != '{') ||
+                (s[i] == ']' && stack[top] != '[')) {
+                return false; // Mismatched closing bracket type
+            }
+            top--;
+        }
+    }
+
+    return top == -1; // Check if all brackets are matched and closed
+}
