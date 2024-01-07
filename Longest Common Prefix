@@ -1,0 +1,30 @@
+char * longestCommonPrefix(char ** strs, int strsSize){
+if (strsSize == 0) {
+        return "";
+    }
+    
+    int minLen = strlen(strs[0]);
+    for (int i = 1; i < strsSize; i++) {
+        int len = strlen(strs[i]);
+        if (len < minLen) {
+            minLen = len;
+        }
+    }
+    
+    char* result = (char*)malloc((minLen + 1) * sizeof(char));
+    int j = 0;
+    
+    for (; j < minLen; j++) {
+        char c = strs[0][j];
+        for (int i = 1; i < strsSize; i++) {
+            if (strs[i][j] != c) {
+                result[j] = '\0'; // Null-terminate the result
+                return result;
+            }
+        }
+        result[j] = c;
+    }
+    
+    result[j] = '\0'; // Null-terminate the result
+    return result;
+}
