@@ -1,0 +1,20 @@
+class Solution(object):
+    def singleNumber(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        ones, twos = 0, 0
+        
+        for num in nums:
+            # First, update `twos` with bits that appear twice (considering `ones` bits)
+            twos |= ones & num
+            # XOR `num` with `ones` to add bits that appear once
+            ones ^= num
+            # Mask to clear bits that appear three times from `ones` and `twos`
+            threes = ones & twos
+            # Remove bits appearing three times from both `ones` and `twos`
+            ones &= ~threes
+            twos &= ~threes
+        
+        return ones
