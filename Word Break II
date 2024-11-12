@@ -1,0 +1,32 @@
+class Solution(object):
+    def wordBreak(self, s, wordDict):
+        """
+        :type s: str
+        :type wordDict: List[str]
+        :rtype: List[str]
+        """
+        word_set = set(wordDict)  # Convert wordDict to a set for fast lookup
+        memo = {}  # Dictionary to memoize results for each start index
+
+        def dfs(start):
+            if start in memo:  # Return memoized result if available
+                return memo[start]
+            if start == len(s):  # If we reach the end of the string
+                return [""]
+
+            results = []
+            # Try each end index from start+1 to len(s)
+            for end in range(start + 1, len(s) + 1):
+                word = s[start:end]
+                if word in word_set:  # If substring is in dictionary
+                    # Recursive call for the remaining substring
+                    for sub in dfs(end):
+                        if sub:
+                            results.append(word + " " + sub)
+                        else:
+                            results.append(word)
+
+            memo[start] = results  # Memoize result for current start
+            return results
+
+        return dfs(0)  # Start DFS from index 0
