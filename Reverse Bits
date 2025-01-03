@@ -1,0 +1,18 @@
+class Solution:
+    # @param n, an integer
+    # @return an integer
+    def reverseBits(self, n):
+        result = 0
+        for i in range(32):
+            # Extract the last bit of `n`
+            last_bit = n & 1
+            # Shift the `result` left and add the last bit
+            result = (result << 1) | last_bit
+            # Shift `n` right to process the next bit
+            n >>= 1
+        return result
+
+# Example usage
+solution = Solution()
+print(solution.reverseBits(0b00000010100101000001111010011100))  # Output: 964176192
+print(solution.reverseBits(0b11111111111111111111111111111101))  # Output: 3221225471
