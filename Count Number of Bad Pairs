@@ -1,0 +1,19 @@
+from collections import defaultdict
+
+class Solution(object):
+    def countBadPairs(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        n = len(nums)
+        total_pairs = (n * (n - 1)) // 2  # Total number of pairs (i, j)
+        count_good_pairs = 0
+        freq = defaultdict(int)
+        
+        for j in range(n):
+            key = nums[j] - j  # Transforming equation to nums[j] - j == nums[i] - i
+            count_good_pairs += freq[key]  # Count pairs where condition holds
+            freq[key] += 1  # Increment frequency of current key
+        
+        return total_pairs - count_good_pairs
