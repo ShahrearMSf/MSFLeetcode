@@ -1,0 +1,16 @@
+class Solution(object):
+    def clearDigits(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+        stack = []
+        
+        for char in s:
+            if char.isdigit():
+                if stack:
+                    stack.pop()  # Remove the closest non-digit character to the left
+            else:
+                stack.append(char)  # Add non-digit characters to stack
+        
+        return "".join(stack)
