@@ -1,0 +1,17 @@
+class Solution(object):
+    def invertTree(self, root):
+        """
+        :type root: Optional[TreeNode]
+        :rtype: Optional[TreeNode]
+        """
+        if not root:
+            return None
+        
+        # Swap left and right children
+        root.left, root.right = root.right, root.left
+        
+        # Recursively invert left and right subtrees
+        self.invertTree(root.left)
+        self.invertTree(root.right)
+        
+        return root
