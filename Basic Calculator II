@@ -1,0 +1,29 @@
+class Solution(object):
+    def calculate(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        s = s.replace(" ", "")  # Remove spaces
+        stack = []
+        num = 0
+        sign = '+'
+        
+        for i, char in enumerate(s):
+            if char.isdigit():
+                num = num * 10 + int(char)
+            
+            if char in '+-*/' or i == len(s) - 1:  # Process when an operator or end of string is reached
+                if sign == '+':
+                    stack.append(num)
+                elif sign == '-':
+                    stack.append(-num)
+                elif sign == '*':
+                    stack.append(stack.pop() * num)
+                elif sign == '/':
+                    stack.append(int(stack.pop() / num))  # Truncate towards zero
+                
+                sign = char
+                num = 0
+        
+        return sum(stack)
