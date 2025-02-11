@@ -1,0 +1,39 @@
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+class Solution:
+    def kthSmallest(self, root, k):
+        """
+        :type root: TreeNode
+        :type k: int
+        :rtype: int
+        """
+        # Initialize the counter and result variable
+        self.count = 0
+        self.result = None
+        
+        # Define the in-order traversal function
+        def in_order_traversal(node):
+            if not node or self.result is not None:
+                return
+            
+            # Traverse the left subtree
+            in_order_traversal(node.left)
+            
+            # Visit the current node
+            self.count += 1
+            if self.count == k:
+                self.result = node.val
+                return
+            
+            # Traverse the right subtree
+            in_order_traversal(node.right)
+        
+        # Start the in-order traversal from the root
+        in_order_traversal(root)
+        
+        return self.result
