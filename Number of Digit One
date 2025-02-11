@@ -1,0 +1,27 @@
+class Solution(object):
+    def countDigitOne(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+        count = 0
+        place = 1  # Start with the units place
+        
+        while place <= n:
+            higher = n // (place * 10)
+            current = (n // place) % 10
+            lower = n % place
+            
+            # Count contributions from higher digits
+            count += higher * place
+            
+            # Count contributions from the current digit
+            if current > 1:
+                count += place
+            elif current == 1:
+                count += lower + 1
+            
+            # Move to the next higher place value
+            place *= 10
+        
+        return count
