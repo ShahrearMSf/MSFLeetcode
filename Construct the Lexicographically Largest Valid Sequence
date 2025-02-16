@@ -1,0 +1,41 @@
+class Solution(object):
+    def constructDistancedSequence(self, n):
+        """
+        :type n: int
+        :rtype: List[int]
+        """
+        result = [0] * (2 * n - 1)  # The length of the sequence is 2*n-1
+        used = [False] * (n + 1)  # To track used numbers
+        
+        def backtrack(index):
+            if index == len(result):
+                return True
+            
+            if result[index] != 0:  # Skip filled positions
+                return backtrack(index + 1)
+            
+            for num in range(n, 0, -1):
+                if used[num]:
+                    continue
+                
+                if num == 1:  # Number 1 only occurs once
+                    result[index] = num
+                    used[num] = True
+                    if backtrack(index + 1):
+                        return True
+                    result[index] = 0
+                    used[num] = False
+                
+                else:  # Other numbers occur twice at the distance of the number itself
+                    if index + num < len(result) and result[index + num] == 0:
+                        result[index] = result[index + num] = num
+                        used[num] = True
+                        if backtrack(index + 1):
+                            return True
+                        result[index] = result[index + num] = 0
+                        used[num] = False
+            
+            return False
+        
+        backtrack(0)
+        return result
