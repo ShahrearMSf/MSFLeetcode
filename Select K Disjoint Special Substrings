@@ -1,0 +1,9 @@
+from collections import Counter
+
+class Solution:
+    def maxSubstringLength(self, s: str, k: int) -> bool:
+        freq = Counter(s)
+        
+        unique_chars = sum(1 for count in freq.values() if count == 1)
+        
+        return unique_chars >= k
