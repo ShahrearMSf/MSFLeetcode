@@ -1,0 +1,63 @@
+from collections import defaultdict
+
+class Solution(object):
+    def mostProfitablePath(self, edges, bob, amount):
+        """
+        :type edges: List[List[int]]
+        :type bob: int
+        :type amount: List[int]
+        :rtype: int
+        """
+        # Step 1: Build the tree as an adjacency list
+        tree = defaultdict(list)
+        for u, v in edges:
+            tree[u].append(v)
+            tree[v].append(u)
+        
+        # Step 2: Find the path from Bob to root and track Bob's arrival time at each node
+        parent = {0: None}
+        bob_time = {}  # Stores when Bob reaches each node
+        
+        def dfs_bob(node, par, depth):
+            parent[node] = par
+            for neighbor in tree[node]:
+                if neighbor != par:
+                    dfs_bob(neighbor, node, depth + 1)
+        
+        dfs_bob(0, None, 0)
+        
+        # Step 3: Track Bob's path and arrival times
+        time = 0
+        bob_path = set()
+        while bob is not None:
+            bob_time[bob] = time
+            bob_path.add(bob)
+            bob = parent[bob]
+            time += 1
+        
+        # Step 4: DFS for Alice to find the most profitable path
+        max_profit = [-float('inf')]  # Using a list to allow modification inside dfs_alice
+        
+        def dfs_alice(node, par, current_profit, time):
+            # Apply Alice and Bob rules for income sharing
+            if node in bob_path:
+                if time < bob_time[node]:  # Alice reaches first
+                    current_profit += amount[node]
+                elif time == bob_time[node]:  # Both reach at the same time
+                    current_profit += amount[node] // 2
+            else:
+                current_profit += amount[node]
+            
+            # Check if it's a leaf node
+            is_leaf = True
+            for neighbor in tree[node]:
+                if neighbor != par:
+                    is_leaf = False
+                    dfs_alice(neighbor, node, current_profit, time + 1)
+            
+            # If it's a leaf, update max_profit
+            if is_leaf:
+                max_profit[0] = max(max_profit[0], current_profit)
+        
+        dfs_alice(0, None, 0, 0)
+        return max_profit[0]
