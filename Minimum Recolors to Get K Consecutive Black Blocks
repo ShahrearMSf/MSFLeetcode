@@ -1,0 +1,20 @@
+class Solution(object):
+    def minimumRecolors(self, blocks, k):
+        """
+        :type blocks: str
+        :type k: int
+        :rtype: int
+        """
+        min_operations = k  # Maximum possible operations needed
+        current_white = blocks[:k].count('W')  # Count 'W' in the first window
+        min_operations = min(min_operations, current_white)
+        
+        for i in range(k, len(blocks)):
+            if blocks[i - k] == 'W':
+                current_white -= 1  # Remove the leftmost character from the window
+            if blocks[i] == 'W':
+                current_white += 1  # Add the new character to the window
+            
+            min_operations = min(min_operations, current_white)
+        
+        return min_operations
