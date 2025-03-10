@@ -1,0 +1,37 @@
+class Solution(object):
+    def countOfSubstrings(self, word, k):
+        """
+        :type word: str
+        :type k: int
+        :rtype: int
+        """
+        from collections import Counter
+        
+        vowels = {'a', 'e', 'i', 'o', 'u'}
+        vowel_count = Counter()
+        consonant_count = 0
+        left = 0
+        result = 0
+        
+        for right in range(len(word)):
+            # Add new character from the right
+            if word[right] in vowels:
+                vowel_count[word[right]] += 1
+            else:
+                consonant_count += 1
+            
+            # Shrink window from the left if consonant count exceeds k
+            while consonant_count > k:
+                if word[left] in vowels:
+                    vowel_count[word[left]] -= 1
+                    if vowel_count[word[left]] == 0:
+                        del vowel_count[word[left]]
+                else:
+                    consonant_count -= 1
+                left += 1
+            
+            # Check if the current window contains all vowels at least once
+            if len(vowel_count) == 5 and consonant_count == k:
+                result += 1
+        
+        return result
