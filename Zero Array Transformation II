@@ -1,0 +1,14 @@
+class Solution:
+    def minZeroArray(self, nums, queries):
+        """
+        :type nums: List[int]
+        :type queries: List[List[int]]
+        :rtype: int
+        """
+        n = len(nums)
+        for k, (l, r, val) in enumerate(queries, 1):
+            for i in range(l, r + 1):
+                nums[i] = max(0, nums[i] - val)
+            if all(num == 0 for num in nums):
+                return k
+        return -1
