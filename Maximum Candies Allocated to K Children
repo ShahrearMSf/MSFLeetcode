@@ -1,0 +1,24 @@
+class Solution(object):
+    def maximumCandies(self, candies, k):
+        """
+        :type candies: List[int]
+        :type k: int
+        :rtype: int
+        """
+        if sum(candies) < k:  
+            return 0  # Not enough candies to give at least one to each child
+
+        left, right = 1, max(candies)
+        best = 0
+
+        while left <= right:
+            mid = (left + right) // 2
+            count = sum(c // mid for c in candies)  # Count how many children can be served
+
+            if count >= k:  # We can allocate at least k children
+                best = mid  # Update best possible candies per child
+                left = mid + 1  # Try for a larger value
+            else:
+                right = mid - 1  # Reduce the amount of candies per child
+
+        return best
