@@ -1,0 +1,45 @@
+class Solution(object):
+    def countCompleteComponents(self, n, edges):
+        """
+        :type n: int
+        :type edges: List[List[int]]
+        :rtype: int
+        """
+        from collections import defaultdict, deque
+        
+        # Build adjacency list
+        graph = defaultdict(set)
+        for u, v in edges:
+            graph[u].add(v)
+            graph[v].add(u)
+        
+        visited = set()
+        complete_components = 0
+        
+        def bfs(start):
+            queue = deque([start])
+            component = set([start])
+            
+            while queue:
+                node = queue.popleft()
+                for neighbor in graph[node]:
+                    if neighbor not in component:
+                        component.add(neighbor)
+                        queue.append(neighbor)
+            
+            return component
+        
+        # Check each node for unvisited components
+        for i in range(n):
+            if i not in visited:
+                component = bfs(i)
+                visited.update(component)
+                
+                # Check if the component is complete
+                size = len(component)
+                is_complete = all(len(graph[node]) == size - 1 for node in component)
+                
+                if is_complete:
+                    complete_components += 1
+        
+        return complete_components
