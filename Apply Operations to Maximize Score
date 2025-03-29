@@ -1,0 +1,58 @@
+from math import sqrt
+
+def sieve_prime_scores(limit=10**5):
+    """Precompute the prime scores for all numbers up to 'limit' using Sieve of Eratosthenes."""
+    prime_score = [0] * (limit + 1)
+    
+    for i in range(2, limit + 1):
+        if prime_score[i] == 0:  # 'i' is prime
+            for j in range(i, limit + 1, i):
+                prime_score[j] += 1
+                
+    return prime_score
+
+class Solution:
+    def maximumScore(self, nums, k):
+        MOD = 10**9 + 7
+        n = len(nums)
+        
+        # Step 1: Compute Prime Scores using Precomputed Sieve
+        prime_scores = sieve_prime_scores()
+        scores = [prime_scores[num] for num in nums]
+        
+        # Step 2: Monotonic Stack to Compute Range of Influence
+        left, right = [-1] * n, [n] * n
+        
+        stack = []
+        for i in range(n):
+            while stack and scores[stack[-1]] < scores[i]:
+                stack.pop()
+            left[i] = stack[-1] if stack else -1
+            stack.append(i)
+        
+        # Instead of clear(), use slicing to clear the stack
+        stack[:] = []
+        for i in range(n - 1, -1, -1):
+            while stack and scores[stack[-1]] <= scores[i]:
+                stack.pop()
+            right[i] = stack[-1] if stack else n
+            stack.append(i)
+        
+        # Step 3: Compute Contributions & Sort by Value
+        contrib = []
+        for i in range(n):
+            freq = (i - left[i]) * (right[i] - i)
+            contrib.append((nums[i], freq))
+        
+        contrib.sort(reverse=True, key=lambda x: x[0])  # Sort descending by value
+        
+        # Step 4: Multiply the largest available numbers up to 'k' operations
+        score = 1
+        for num, freq in contrib:
+            use = min(k, freq)
+            score = (score * pow(num, use, MOD)) % MOD
+            k -= use
+            if k == 0:
+                break
+        
+        return score
