@@ -1,0 +1,18 @@
+class Solution(object): 
+    def rotateString(self, s, goal):
+        """
+        :type s: str
+        :type goal: str
+        :rtype: bool
+        """
+        # Check if the lengths are different
+        if len(s) != len(goal):
+            return False
+        
+        # If goal is a substring of s+s, it means s can be rotated to match goal
+        return goal in (s + s)
+
+# Example usage
+solution = Solution()
+print(solution.rotateString("abcde", "cdeab"))  # Output: True
+print(solution.rotateString("abcde", "abced"))  # Output: False
