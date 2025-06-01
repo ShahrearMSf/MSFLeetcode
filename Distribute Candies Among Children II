@@ -1,0 +1,21 @@
+from math import comb
+
+class Solution:
+    def distributeCandies(self, n: int, limit: int) -> int:
+        def count_ways(n):
+            if n < 0:
+                return 0
+            return comb(n + 2, 2)  # Number of non-negative integer solutions to x + y + z = n
+
+        total = count_ways(n)
+
+        # Subtract cases where one child gets more than limit
+        total -= 3 * count_ways(n - (limit + 1))
+
+        # Add back cases where two children get more than limit
+        total += 3 * count_ways(n - 2 * (limit + 1))
+
+        # Subtract cases where all three children get more than limit
+        total -= count_ways(n - 3 * (limit + 1))
+
+        return total
