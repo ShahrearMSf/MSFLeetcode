@@ -1,0 +1,47 @@
+from collections import deque
+from typing import List
+
+class Solution:
+    def maxCandies(
+        self,
+        status: List[int],
+        candies: List[int],
+        keys: List[List[int]],
+        containedBoxes: List[List[int]],
+        initialBoxes: List[int]
+    ) -> int:
+        n = len(status)
+        visited = [False] * n
+        hasKey = [False] * n
+        availableBoxes = set(initialBoxes)
+        queue = deque()
+
+        # Initially add all boxes that are open
+        for box in initialBoxes:
+            if status[box] == 1:
+                queue.append(box)
+                visited[box] = True
+
+        totalCandies = 0
+
+        while queue:
+            curr = queue.popleft()
+            totalCandies += candies[curr]
+
+            # Gain new keys
+            for key in keys[curr]:
+                if not hasKey[key]:
+                    hasKey[key] = True
+                    if key in availableBoxes and not visited[key]:
+                        queue.append(key)
+                        visited[key] = True
+
+            # Discover new boxes
+            for newBox in containedBoxes[curr]:
+                availableBoxes.add(newBox)
+                if status[newBox] == 1 or hasKey[newBox]:
+                    if not visited[newBox]:
+                        queue.append(newBox)
+                        visited[newBox] = True
+
+        return totalCandies
