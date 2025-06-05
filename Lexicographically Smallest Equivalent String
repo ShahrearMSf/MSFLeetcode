@@ -1,0 +1,32 @@
+class Solution:
+    def smallestEquivalentString(self, s1: str, s2: str, baseStr: str) -> str:
+        parent = list(range(26))  # parent[i] = i initially, for each lowercase letter
+
+        # Find function with path compression
+        def find(x):
+            if parent[x] != x:
+                parent[x] = find(parent[x])
+            return parent[x]
+
+        # Union function to always keep the lexicographically smaller as the root
+        def union(x, y):
+            px = find(x)
+            py = find(y)
+            if px == py:
+                return
+            if px < py:
+                parent[py] = px
+            else:
+                parent[px] = py
+
+        # Union the characters from s1 and s2
+        for a, b in zip(s1, s2):
+            union(ord(a) - ord('a'), ord(b) - ord('a'))
+
+        # Build the result string
+        result = []
+        for c in baseStr:
+            smallest_char = chr(find(ord(c) - ord('a')) + ord('a'))
+            result.append(smallest_char)
+
+        return ''.join(result)
