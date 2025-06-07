@@ -1,0 +1,19 @@
+class Solution(object):
+    def mergeArrays(self, nums1, nums2):
+        """
+        :type nums1: List[List[int]]
+        :type nums2: List[List[int]]
+        :rtype: List[List[int]]
+        """
+        merged_dict = {}
+        
+        # Process nums1
+        for id, val in nums1:
+            merged_dict[id] = merged_dict.get(id, 0) + val
+        
+        # Process nums2
+        for id, val in nums2:
+            merged_dict[id] = merged_dict.get(id, 0) + val
+        
+        # Convert dictionary to sorted list
+        return sorted([[id, val] for id, val in merged_dict.items()])

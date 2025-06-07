@@ -1,0 +1,33 @@
+class Solution {
+public:
+    // Helper function to check if numStr can be partitioned to sum up to target
+    bool canPartition(string numStr, int target, int sum = 0) {
+        // If the sum equals the target and the string is fully used, return true
+        if (sum == target && numStr.empty()) {
+            return true;
+        }
+        // Try all possible partitions
+        for (int i = 1; i <= numStr.size(); ++i) {
+            string part = numStr.substr(0, i);
+            int partValue = stoi(part);
+            // Recur for the remaining part of the string
+            if (canPartition(numStr.substr(i), target, sum + partValue)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    int punishmentNumber(int n) {
+        int punishmentSum = 0;
+        for (int i = 1; i <= n; ++i) {
+            int square = i * i;
+            string squareStr = to_string(square);
+            // Check if the square can be partitioned to sum to i
+            if (canPartition(squareStr, i)) {
+                punishmentSum += square;
+            }
+        }
+        return punishmentSum;
+    }
+};

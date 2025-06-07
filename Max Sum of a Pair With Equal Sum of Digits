@@ -1,0 +1,18 @@
+class Solution:
+    def maximumSum(self, nums):
+        # Dictionary to store the maximum number for each digit sum
+        digit_sum_map = {}
+        max_sum = -1
+
+        for num in nums:
+            # Calculate the sum of digits of the current number
+            digit_sum = sum(int(digit) for digit in str(num))
+
+            # If there's already a number with the same digit sum, calculate the potential pair sum
+            if digit_sum in digit_sum_map:
+                max_sum = max(max_sum, digit_sum_map[digit_sum] + num)
+
+            # Update the dictionary with the maximum number for the current digit sum
+            digit_sum_map[digit_sum] = max(digit_sum_map.get(digit_sum, 0), num)
+
+        return max_sum

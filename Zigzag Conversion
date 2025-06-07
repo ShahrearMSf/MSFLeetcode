@@ -1,0 +1,27 @@
+class Solution(object):
+    def convert(self, s, numRows):
+        """
+        :type s: str
+        :type numRows: int
+        :rtype: str
+        """
+        # Edge case: If only one row or string length is less than numRows
+        if numRows == 1 or numRows >= len(s):
+            return s
+        
+        # Create a list to hold strings for each row
+        rows = [''] * numRows
+        current_row = 0
+        going_down = False
+        
+        # Iterate through the characters in the string
+        for char in s:
+            rows[current_row] += char
+            # Change direction when reaching the first or last row
+            if current_row == 0 or current_row == numRows - 1:
+                going_down = not going_down
+            # Update the current row
+            current_row += 1 if going_down else -1
+        
+        # Concatenate all rows to get the final result
+        return ''.join(rows)

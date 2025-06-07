@@ -1,0 +1,35 @@
+class Solution(object):
+    def isAnagram(self, s, t):
+        """
+        :type s: str
+        :type t: str
+        :rtype: bool
+        """
+        # If the lengths of the strings are not equal, they cannot be anagrams
+        if len(s) != len(t):
+            return False
+        
+        # Create a dictionary to count the frequency of each character in 's'
+        char_count = {}
+        
+        # Count each character in 's'
+        for char in s:
+            if char in char_count:
+                char_count[char] += 1
+            else:
+                char_count[char] = 1
+        
+        # Decrease the count for each character in 't'
+        for char in t:
+            if char in char_count:
+                char_count[char] -= 1
+            else:
+                # If the character is not found in 'char_count', 't' has an extra character
+                return False
+        
+        # Check if all counts are zero
+        for count in char_count.values():
+            if count != 0:
+                return False
+        
+        return True

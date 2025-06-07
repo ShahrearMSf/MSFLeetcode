@@ -1,0 +1,43 @@
+from functools import lru_cache
+
+class Solution:
+    def lenOfVDiagonal(self, g: List[List[int]]) -> int:
+        n, m = len(g), len(g[0])
+        
+        # Directions for diagonal movement: top-left to bottom-right, bottom-left to top-right, etc.
+        directions = [[1, 1], [1, -1], [-1, -1], [-1, 1]]
+        
+        # Next value in the sequence (1 -> 2, 2 -> 0, 0 -> 2)
+        next_value = [2, 2, 0]
+        
+        # Using memoization with LRU cache to avoid recomputation
+        @lru_cache(None)
+        def dp(i, j, x, d, k):
+            # Boundary check
+            if not (0 <= i < n and 0 <= j < m): 
+                return 0
+            if g[i][j] != x: 
+                return 0
+            
+            # Recursively extend the V-shape in the same direction
+            res = dp(i + directions[d][0], j + directions[d][1], next_value[x], d, k) + 1
+            
+            # If we can make a clockwise turn, we try the new direction
+            if k > 0:
+                new_direction = (d + 1) % 4
+                res2 = dp(i + directions[new_direction][0], j + directions[new_direction][1], next_value[x], new_direction, 0) + 1
+                res = max(res, res2)
+            
+            return res
+        
+        # Maximum result variable
+        max_result = 0
+        
+        # Iterate through the matrix to find starting points of the V-shape (value = 1)
+        for i in range(n):
+            for j in range(m):
+                if g[i][j] == 1:
+                    # Try to extend the V-shape from (i, j) in all 4 diagonal directions
+                    max_result = max(max_result, max(dp(i, j, 1, d, 1) for d in range(4)))
+        
+        return max_result

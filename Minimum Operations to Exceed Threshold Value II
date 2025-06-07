@@ -1,0 +1,27 @@
+import heapq
+
+class Solution(object):
+    def minOperations(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: int
+        """
+        # Initialize a min-heap with the elements of nums
+        heapq.heapify(nums)
+        operations = 0
+        
+        # Continue until the smallest element in the heap is at least k
+        while nums[0] < k:
+            # Extract the two smallest elements
+            x = heapq.heappop(nums)
+            y = heapq.heappop(nums)
+            
+            # Perform the operation: add min(x, y) * 2 + max(x, y) back to the heap
+            new_element = min(x, y) * 2 + max(x, y)
+            heapq.heappush(nums, new_element)
+            
+            # Increment the operation count
+            operations += 1
+        
+        return operations

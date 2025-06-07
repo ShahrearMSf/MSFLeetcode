@@ -1,0 +1,23 @@
+class Solution(object):
+    def numberOfAlternatingGroups(self, colors, k):
+        """
+        :type colors: List[int]
+        :type k: int
+        :rtype: int
+        """
+        n = len(colors)
+        count = 0
+        
+        # Extend the array to simulate the circular nature
+        extended_colors = colors + colors[:k-1]
+        
+        for i in range(n):
+            valid = True
+            for j in range(i, i + k - 1):
+                if extended_colors[j] == extended_colors[j + 1]:
+                    valid = False
+                    break
+            if valid:
+                count += 1
+        
+        return count

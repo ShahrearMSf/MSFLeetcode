@@ -1,0 +1,14 @@
+class Solution(object):
+    def removeOccurrences(self, s, part):
+        """
+        :type s: str
+        :type part: str
+        :rtype: str
+        """
+        # Loop until 'part' is no longer found in 's'
+        while part in s:
+            # Find the starting index of 'part' in 's'
+            index = s.find(part)
+            # Remove 'part' from 's' by slicing
+            s = s[:index] + s[index + len(part):]
+        return s

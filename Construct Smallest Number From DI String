@@ -1,0 +1,19 @@
+class Solution(object):
+    def smallestNumber(self, pattern):
+        """
+        :type pattern: str
+        :rtype: str
+        """
+        stack = []
+        result = []
+        
+        # We need n+1 digits for a pattern of length n
+        for i in range(len(pattern) + 1):
+            stack.append(str(i + 1))
+            
+            # If it's the end or the next character is 'I', pop all from the stack
+            if i == len(pattern) or pattern[i] == 'I':
+                while stack:
+                    result.append(stack.pop())
+        
+        return ''.join(result)

@@ -4,3 +4,4 @@ class Solution:
         if n==1: 
             return word
         return max(word[i:i+m] for i in range(len(word)))
+

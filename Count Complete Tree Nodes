@@ -1,0 +1,48 @@
+class Solution(object):
+    def countNodes(self, root):
+        """
+        :type root: Optional[TreeNode]
+        :rtype: int
+        """
+        if not root:
+            return 0
+        
+        # Function to calculate the height of the tree
+        def getHeight(node):
+            height = 0
+            while node:
+                height += 1
+                node = node.left  # Keep moving left to measure the height
+            return height
+        
+        # Get the height of the tree
+        height = getHeight(root)
+        
+        # If the tree is a perfect binary tree
+        if height == 1:
+            return 1
+        
+        # Perform binary search to count the nodes in the last level
+        left, right = 0, 2**(height - 1) - 1
+        while left <= right:
+            mid = (left + right) // 2
+            if self.nodeExists(root, height, mid):
+                left = mid + 1
+            else:
+                right = mid - 1
+        
+        # The number of nodes is the number of nodes in the full levels + the nodes found in the last level
+        return (2**(height - 1) - 1) + left
+    
+    # Function to check if a node exists at the given index in the last level
+    def nodeExists(self, node, height, index):
+        left, right = 0, 2**(height - 1) - 1
+        for i in range(height - 1):
+            mid = (left + right) // 2
+            if index <= mid:
+                node = node.left
+                right = mid
+            else:
+                node = node.right
+                left = mid + 1
+        return node is not None

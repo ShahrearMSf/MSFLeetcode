@@ -1,0 +1,29 @@
+class ProductOfNumbers {
+public:
+    vector<int> prefixProducts;
+    
+    ProductOfNumbers() {
+        prefixProducts.push_back(1); // Initial prefix product is 1 for multiplication identity
+    }
+    
+    void add(int num) {
+        if (num == 0) {
+            // Reset prefix products when zero is added
+            prefixProducts.clear();
+            prefixProducts.push_back(1);
+        } else {
+            // Append the product of the last value and current number
+            prefixProducts.push_back(prefixProducts.back() * num);
+        }
+    }
+    
+    int getProduct(int k) {
+        int size = prefixProducts.size();
+        if (k >= size) {
+            // If k is larger than the current prefix list, it means zero was added, so the product is 0
+            return 0;
+        }
+        // Calculate product of last k numbers
+        return prefixProducts.back() / prefixProducts[size - k - 1];
+    }
+};
