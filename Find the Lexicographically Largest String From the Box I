@@ -1,23 +1,7 @@
 class Solution:
-    def answerString(self, word: str, numFriends: int) -> str:
-        from functools import lru_cache
+    def answerString(self, word: str, n: int) -> str:
+        m=len(word)-n+1 
+        if n==1: 
+            return word
+        return max(word[i:i+m] for i in range(len(word)))
 
-        n = len(word)
-        max_string = ""
-
-        @lru_cache(None)
-        def dfs(start: int, k: int):
-            nonlocal max_string
-            if k == 1:
-                if start < n:
-                    substr = word[start:]
-                    max_string = max(max_string, substr)
-                return
-
-            for i in range(start + 1, n - k + 2):  # ensure enough chars left
-                substr = word[start:i]
-                max_string = max(max_string, substr)
-                dfs(i, k - 1)
-
-        dfs(0, numFriends)
-        return max_string
