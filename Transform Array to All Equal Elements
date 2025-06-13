@@ -1,0 +1,19 @@
+from typing import List
+
+class Solution:
+    def canMakeEqual(self, nums: List[int], k: int) -> bool:
+        def count_ops(target: int) -> int:
+            ops = 0
+            arr = nums[:]
+            for i in range(len(arr) - 1):
+                if arr[i] != target:
+                    # Flip both arr[i] and arr[i+1]
+                    arr[i] *= -1
+                    arr[i + 1] *= -1
+                    ops += 1
+            # Check if the last element is also target
+            if arr[-1] != target:
+                return float('inf')  # can't fix it
+            return ops
+        
+        return min(count_ops(1), count_ops(-1)) <= k
