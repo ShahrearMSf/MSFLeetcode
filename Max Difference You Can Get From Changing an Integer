@@ -1,0 +1,24 @@
+class Solution:
+    def maxDiff(self, num: int) -> int:
+        num_str = str(num)
+        
+        # Get the max value by replacing a digit with 9
+        for ch in num_str:
+            if ch != '9':
+                max_num = int(num_str.replace(ch, '9'))
+                break
+        else:
+            max_num = num  # All digits are 9 already
+        
+        # Get the min value
+        if num_str[0] != '1':
+            min_num = int(num_str.replace(num_str[0], '1'))
+        else:
+            for ch in num_str[1:]:
+                if ch != '0' and ch != '1':
+                    min_num = int(num_str.replace(ch, '0'))
+                    break
+            else:
+                min_num = num  # All digits are 0 or 1 already
+
+        return max_num - min_num
