@@ -1,0 +1,23 @@
+class Solution:
+    def maxDistance(self, s: str, k: int) -> int:
+        ans = 0
+        north = south = east = west = 0
+
+        for i, c in enumerate(s):
+            if c == 'N':
+                north += 1
+            elif c == 'S':
+                south += 1
+            elif c == 'E':
+                east += 1
+            elif c == 'W':
+                west += 1
+
+            vertical = abs(north - south)
+            horizontal = abs(east - west)
+            MD = vertical + horizontal
+            # Max possible distance at this step using up to k changes
+            max_possible = MD + min(2 * k, i + 1 - MD)
+            ans = max(ans, max_possible)
+
+        return ans
