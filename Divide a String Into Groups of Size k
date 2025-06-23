@@ -1,0 +1,12 @@
+from typing import List
+
+class Solution:
+    def divideString(self, s: str, k: int, fill: str) -> List[str]:
+        result = []
+        # Pad the string with the fill character so its length is a multiple of k
+        while len(s) % k != 0:
+            s += fill
+        # Split the string into chunks of size k
+        for i in range(0, len(s), k):
+            result.append(s[i:i + k])
+        return result
