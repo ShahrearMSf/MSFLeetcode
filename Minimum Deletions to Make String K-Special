@@ -1,0 +1,21 @@
+from collections import Counter
+
+class Solution:
+    def minimumDeletions(self, word: str, k: int) -> int:
+        freq = Counter(word)
+        freq_list = sorted(freq.values())
+        min_deletions = float('inf')
+
+        for i in range(len(freq_list)):
+            base_freq = freq_list[i]
+            deletions = 0
+
+            for j in range(len(freq_list)):
+                if freq_list[j] < base_freq:
+                    deletions += freq_list[j]  # delete all
+                elif freq_list[j] > base_freq + k:
+                    deletions += freq_list[j] - (base_freq + k)  # reduce to base+k
+
+            min_deletions = min(min_deletions, deletions)
+
+        return min_deletions
