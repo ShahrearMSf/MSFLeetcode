@@ -1,0 +1,18 @@
+from typing import List
+
+class Solution:
+    def findKDistantIndices(self, nums: List[int], key: int, k: int) -> List[int]:
+        result = set()
+        
+        # Step 1: Find all indices where nums[j] == key
+        key_indices = [j for j, val in enumerate(nums) if val == key]
+        
+        # Step 2: For each such j, add all indices i where |i - j| <= k
+        for j in key_indices:
+            start = max(0, j - k)
+            end = min(len(nums) - 1, j + k)
+            for i in range(start, end + 1):
+                result.add(i)
+        
+        # Step 3: Return sorted list
+        return sorted(result)
