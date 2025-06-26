@@ -1,0 +1,14 @@
+class Solution:
+    def longestSubsequence(self, s: str, k: int) -> int:
+        sm = 0                  # Current value of the selected binary subsequence
+        cnt = 0                 # Number of characters (bits) included in the subsequence
+        bits = k.bit_length()   # Max number of bits a number ≤ k can have
+
+        for i, ch in enumerate(s[::-1]):  # Go from LSB to MSB (right to left)
+            if ch == "1":
+                if i < bits and sm + (1 << i) <= k:
+                    sm += 1 << i
+                    cnt += 1
+            else:
+                cnt += 1
+        return cnt
