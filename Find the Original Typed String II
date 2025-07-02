@@ -1,0 +1,58 @@
+class Solution:
+    MOD = 10**9 + 7  # Large prime modulus for results
+
+    def possibleStringCount(self, word: str, k: int) -> int:
+        if not word:
+            return 0  # No possible original string if word is empty
+
+        # Step 1: Group consecutive same characters and count lengths
+        groups = []
+        count = 1
+        for i in range(1, len(word)):
+            if word[i] == word[i - 1]:
+                count += 1  # Keep counting same character
+            else:
+                groups.append(count)  # End of a group
+                count = 1
+        groups.append(count)  # Add the final group
+
+        # Step 2: Calculate total possible combinations (regardless of k)
+        # For each group of length `num`, there are `num` choices (1 to num)
+        total = 1
+        for num in groups:
+            total = (total * num) % self.MOD  # Multiply possibilities for each group
+
+        # Early return if minimum required length `k` is less than or equal to number of groups
+        # That means taking 1 character from each group is enough
+        if k <= len(groups):
+            return total
+
+        # Step 3: Use DP to count how many combinations produce a string of length < k
+        # dp[s] = number of ways to make original string of length s
+        dp = [0] * k
+        dp[0] = 1  # One way to make length 0: take 0 chars initially
+
+        # For each group, update dp
+        for num in groups:
+            new_dp = [0] * k
+            sum_val = 0  # Rolling sum to calculate window sum for bounded knapsack
+
+            for s in range(k):
+                # Expand sliding window: add dp[s - 1]
+                if s > 0:
+                    sum_val = (sum_val + dp[s - 1]) % self.MOD
+
+                # Shrink sliding window: remove dp[s - num - 1] (exceeds limit of this group)
+                if s > num:
+                    sum_val = (sum_val - dp[s - num - 1] + self.MOD) % self.MOD
+
+                # Assign updated value
+                new_dp[s] = sum_val
+
+            dp = new_dp  # Move to next group
+
+        # Step 4: Subtract number of invalid (too short) combinations from total
+        invalid = sum(dp[len(groups):k]) % self.MOD
+
+        # Final answer is valid = total - invalid
+        return (total - invalid + self.MOD) % self.MOD
