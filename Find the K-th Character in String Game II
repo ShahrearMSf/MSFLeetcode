@@ -1,0 +1,33 @@
+class Solution:
+    def kthCharacter(self, k: int, operations: List[int]) -> str:
+        ops = operations
+        n = len(ops)
+
+        # Track lengths after each operation
+        lengths = [1]  # initially "a" has length 1
+
+        for op in ops:
+            prev_len = lengths[-1]
+            if op == 0:
+                new_len = prev_len * 2
+            else:  # op == 1
+                new_len = prev_len * 2
+            lengths.append(new_len)
+
+        shift_count = 0  # number of character shifts due to op=1
+        idx = k - 1  # convert to 0-based index
+
+        for i in range(n - 1, -1, -1):
+            half_len = lengths[i]
+
+            if idx >= half_len:
+                # Character came from the second half
+                idx -= half_len
+                if ops[i] == 1:
+                    shift_count += 1
+            else:
+                # Character came from the first half
+                pass  # nothing to change
+
+        # Final character is at index 0 of original "a", shifted `shift_count` times
+        return chr((ord('a') - ord('a') + shift_count) % 26 + ord('a'))
