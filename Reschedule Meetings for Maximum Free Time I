@@ -1,0 +1,30 @@
+class Solution:
+    def maxFreeTime(self, eventTime: int, k: int, startTime: List[int], endTime: List[int]) -> int:
+        # Number of meetings and initial busy time for first k meetings
+        n, busy = len(startTime), 0
+        for i in range(k):
+            # Sum durations of the first k meetings
+            busy += endTime[i] - startTime[i]
+
+        # If we can reschedule all meetings, return total event time minus busy time
+        if n == k:
+            return eventTime - busy
+
+        # Initial answer: gap before the (k)th meeting after rescheduling first k meetings
+        ans = startTime[k] - busy
+
+        l = 0  # Left index of the sliding window
+        for r in range(k, n):
+            # Slide the window: remove duration at l, add duration at r
+            busy += (endTime[r] - startTime[r]) - (endTime[l] - startTime[l])
+            
+            # Define the end of the current gap: either eventTime or the start of the next meeting
+            end = eventTime if r == n - 1 else startTime[r + 1]
+            # Define the start of the current gap: end time of the meeting at l
+            start = endTime[l]
+            
+            # Update maximum free time
+            ans = max(ans, end - start - busy)
+            l += 1  # Move the window forward
+
+        return ans
