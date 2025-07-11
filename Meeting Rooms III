@@ -1,0 +1,39 @@
+import heapq
+from typing import List
+
+class Solution:
+    def mostBooked(self, n: int, meetings: List[List[int]]) -> int:
+        meetings.sort()  # Sort by start time
+
+        # Min-heaps
+        free_rooms = list(range(n))
+        heapq.heapify(free_rooms)  # Free rooms, sorted by room number
+        used_rooms = []  # (end_time, room_number)
+
+        # Meeting count per room
+        room_meeting_counts = [0] * n
+
+        for start, end in meetings:
+            # Free up rooms that are done by the current meeting's start time
+            while used_rooms and used_rooms[0][0] <= start:
+                end_time, room_num = heapq.heappop(used_rooms)
+                heapq.heappush(free_rooms, room_num)
+
+            if free_rooms:
+                # Assign the meeting to the lowest-numbered free room
+                room_num = heapq.heappop(free_rooms)
+                heapq.heappush(used_rooms, (end, room_num))
+            else:
+                # No rooms are free, delay meeting to the earliest room's free time
+                end_time, room_num = heapq.heappop(used_rooms)
+                duration = end - start
+                new_end = end_time + duration
+                heapq.heappush(used_rooms, (new_end, room_num))
+            
+            room_meeting_counts[room_num] += 1
+
+        # Return the room with the most meetings (smallest number in case of tie)
+        max_meetings = max(room_meeting_counts)
+        for i in range(n):
+            if room_meeting_counts[i] == max_meetings:
+                return i
