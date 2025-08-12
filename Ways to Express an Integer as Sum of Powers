@@ -1,0 +1,20 @@
+class Solution:
+    def numberOfWays(self, n: int, x: int) -> int:
+        MOD = 10**9 + 7
+        
+        # Precompute all powers <= n
+        powers = []
+        base = 1
+        while (p := base ** x) <= n:
+            powers.append(p)
+            base += 1
+        
+        # Bottom-up DP (1D array)
+        dp = [0] * (n + 1)
+        dp[0] = 1  # one way to make sum 0: choose nothing
+        
+        for p in powers:
+            for s in range(n, p - 1, -1):
+                dp[s] = (dp[s] + dp[s - p]) % MOD
+        
+        return dp[n]
