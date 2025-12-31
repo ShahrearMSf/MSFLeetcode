@@ -1,0 +1,55 @@
+from typing import List
+
+class Solution:
+    def latestDayToCross(self, row: int, col: int, cells: List[List[int]]) -> int:
+        n = row * col
+        TOP = n
+        BOTTOM = n + 1
+
+        parent = list(range(n + 2))
+        rank = [0] * (n + 2)
+
+        def find(x):
+            if parent[x] != x:
+                parent[x] = find(parent[x])
+            return parent[x]
+
+        def union(x, y):
+            rx, ry = find(x), find(y)
+            if rx != ry:
+                if rank[rx] < rank[ry]:
+                    parent[rx] = ry
+                else:
+                    parent[ry] = rx
+                    if rank[rx] == rank[ry]:
+                        rank[rx] += 1
+
+        grid = [[1] * col for _ in range(row)]
+
+        def index(r, c):
+            return r * col + c
+
+        directions = [(1,0), (-1,0), (0,1), (0,-1)]
+
+        # Reverse flooding
+        for day in range(len(cells) - 1, -1, -1):
+            r, c = cells[day]
+            r -= 1
+            c -= 1
+            grid[r][c] = 0
+            cur = index(r, c)
+
+            if r == 0:
+                union(cur, TOP)
+            if r == row - 1:
+                union(cur, BOTTOM)
+
+            for dr, dc in directions:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < row and 0 <= nc < col and grid[nr][nc] == 0:
+                    union(cur, index(nr, nc))
+
+            if find(TOP) == find(BOTTOM):
+                return day
+
+        return 0
