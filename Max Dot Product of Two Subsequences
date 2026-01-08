@@ -1,0 +1,27 @@
+from typing import List
+
+class Solution:
+    def maxDotProduct(self, nums1: List[int], nums2: List[int]) -> int:
+        n, m = len(nums1), len(nums2)
+        
+        # Initialize DP table with very small values
+        dp = [[float('-inf')] * m for _ in range(n)]
+        
+        for i in range(n):
+            for j in range(m):
+                prod = nums1[i] * nums2[j]
+                
+                # Start new or extend previous subsequence
+                best = prod
+                if i > 0 and j > 0:
+                    best = max(best, dp[i-1][j-1] + prod)
+                
+                # Skip elements
+                if i > 0:
+                    best = max(best, dp[i-1][j])
+                if j > 0:
+                    best = max(best, dp[i][j-1])
+                
+                dp[i][j] = best
+        
+        return dp[n-1][m-1]
