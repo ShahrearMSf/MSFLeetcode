@@ -1,0 +1,106 @@
+from typing import List
+from bisect import bisect_left, bisect_right, insort
+
+
+class SegmentTree:
+    def __init__(self, n):
+        self.n = n
+        self.seg = [0] * (4 * n)
+
+    def update(self, idx, val, node, l, r):
+        if l == r:
+            self.seg[node] = val
+            return
+
+        mid = (l + r) // 2
+        if idx <= mid:
+            self.update(idx, val, node * 2, l, mid)
+        else:
+            self.update(idx, val, node * 2 + 1, mid + 1, r)
+
+        self.seg[node] = max(
+            self.seg[node * 2],
+            self.seg[node * 2 + 1]
+        )
+
+    def query(self, ql, qr, node, l, r):
+        if ql > r or qr < l:
+            return 0
+
+        if ql <= l and r <= qr:
+            return self.seg[node]
+
+        mid = (l + r) // 2
+
+        return max(
+            self.query(ql, qr, node * 2, l, mid),
+            self.query(ql, qr, node * 2 + 1, mid + 1, r),
+        )
+
+
+class Solution:
+    def getResults(self, queries: List[List[int]]) -> List[bool]:
+        MAXX = 50000
+
+        # Obstacles existing after all insertions
+        obstacles = [0, MAXX]
+
+        for q in queries:
+            if q[0] == 1:
+                obstacles.append(q[1])
+
+        obstacles.sort()
+
+        seg = SegmentTree(MAXX + 1)
+
+        # gap ending at obstacles[i]
+        for i in range(1, len(obstacles)):
+            seg.update(
+                obstacles[i],
+                obstacles[i] - obstacles[i - 1],
+                1,
+                0,
+                MAXX,
+            )
+
+        ans = []
+
+        for q in reversed(queries):
+
+            if q[0] == 1:
+                x = q[1]
+
+                idx = bisect_left(obstacles, x)
+
+                left = obstacles[idx - 1]
+                right = obstacles[idx + 1]
+
+                obstacles.pop(idx)
+
+                seg.update(
+                    right,
+                    right - left,
+                    1,
+                    0,
+                    MAXX,
+                )
+
+            else:
+                _, x, sz = q
+
+                idx = bisect_right(obstacles, x) - 1
+                prev_obstacle = obstacles[idx]
+
+                best = seg.query(
+                    0,
+                    x,
+                    1,
+                    0,
+                    MAXX,
+                )
+
+                best = max(best, x - prev_obstacle)
+
+                ans.append(best >= sz)
+
+        return ans[::-1]
