@@ -1,0 +1,102 @@
+from typing import List
+import bisect
+
+class Solution:
+    def pathExistenceQueries(self, n: int, nums: List[int], maxDiff: int, queries: List[List[int]]) -> List[int]:
+        # Sort nodes by value
+        arr = sorted((v, i) for i, v in enumerate(nums))
+
+        # rank[original index] = position in sorted order
+        rank = [0] * n
+        values = [0] * n
+        for pos, (v, idx) in enumerate(arr):
+            rank[idx] = pos
+            values[pos] = v
+
+        # right[i] = furthest sorted index reachable in one edge
+        right = [0] * n
+        j = 0
+        for i in range(n):
+            while j + 1 < n and values[j + 1] - values[i] <= maxDiff:
+                j += 1
+            right[i] = j
+
+        # left[i] = leftmost sorted index reachable in one edge
+        left = [0] * n
+        j = 0
+        for i in range(n):
+            while values[i] - values[j] > maxDiff:
+                j += 1
+            left[i] = j
+
+        LOG = (n).bit_length()
+
+        # Binary lifting to move right
+        upR = [right]
+        for _ in range(LOG - 1):
+            prev = upR[-1]
+            cur = [0] * n
+            for i in range(n):
+                cur[i] = prev[prev[i]]
+            upR.append(cur)
+
+        # Binary lifting to move left
+        upL = [left]
+        for _ in range(LOG - 1):
+            prev = upL[-1]
+            cur = [0] * n
+            for i in range(n):
+                cur[i] = prev[prev[i]]
+            upL.append(cur)
+
+        ans = []
+
+        for u, v in queries:
+            a = rank[u]
+            b = rank[v]
+
+            if a == b:
+                ans.append(0)
+                continue
+
+            # Move left -> right
+            if a < b:
+                if right[a] < a + 1:
+                    ans.append(-1)
+                    continue
+
+                pos = a
+                jumps = 0
+
+                for k in range(LOG - 1, -1, -1):
+                    nxt = upR[k][pos]
+                    if nxt < b:
+                        pos = nxt
+                        jumps += 1 << k
+
+                if right[pos] >= b:
+                    ans.append(jumps + 1)
+                else:
+                    ans.append(-1)
+
+            # Move right -> left
+            else:
+                if left[a] > a - 1:
+                    ans.append(-1)
+                    continue
+
+                pos = a
+                jumps = 0
+
+                for k in range(LOG - 1, -1, -1):
+                    nxt = upL[k][pos]
+                    if nxt > b:
+                        pos = nxt
+                        jumps += 1 << k
+
+                if left[pos] <= b:
+                    ans.append(jumps + 1)
+                else:
+                    ans.append(-1)
+
+        return ans
