@@ -1,0 +1,86 @@
+class Solution:
+    def smallestPalindrome(self, s: str, k: int) -> str:
+        from collections import Counter
+
+        freq = Counter(s)
+
+        mid = ""
+        half = [0] * 26
+        m = 0
+
+        for i in range(26):
+            c = chr(ord('a') + i)
+            if freq[c] % 2:
+                mid = c
+            half[i] = freq[c] // 2
+            m += half[i]
+
+        # ---------- sieve ----------
+        n = m
+        isPrime = [True] * (n + 1)
+        primes = []
+        for i in range(2, n + 1):
+            if isPrime[i]:
+                primes.append(i)
+                j = i * i
+                while j <= n:
+                    isPrime[j] = False
+                    j += i
+
+        # exponent of p in x!
+        def fact_exp(x, p):
+            e = 0
+            while x:
+                x //= p
+                e += x
+            return e
+
+        # count permutations of current multiset
+        def count(cnt):
+            exp = {}
+
+            for p in primes:
+                exp[p] = fact_exp(sum(cnt), p)
+
+            for v in cnt:
+                if v == 0:
+                    continue
+                for p in primes:
+                    if p > v:
+                        break
+                    exp[p] -= fact_exp(v, p)
+
+            res = 1
+            LIMIT = k
+            for p in primes:
+                e = exp[p]
+                while e:
+                    res *= p
+                    if res >= LIMIT:
+                        return LIMIT
+                    e -= 1
+            return res
+
+        total = count(half)
+        if total < k:
+            return ""
+
+        left = []
+
+        for _ in range(m):
+            for c in range(26):
+                if half[c] == 0:
+                    continue
+
+                half[c] -= 1
+                ways = count(half)
+
+                if ways >= k:
+                    left.append(chr(ord('a') + c))
+                    break
+
+                k -= ways
+                half[c] += 1
+
+        left = "".join(left)
+        return left + mid + left[::-1]
