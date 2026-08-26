@@ -1,0 +1,32 @@
+class Solution:
+
+    def shortestBeautifulSubstring(self, s: str, k: int) -> str:
+        left = 0
+        ones = 0
+        ans = ""
+
+        for right in range(len(s)):
+            if s[right] == '1':
+                ones += 1
+
+            # We only care about windows containing at most k ones.
+            while ones > k:
+                if s[left] == '1':
+                    ones -= 1
+                left += 1
+
+            # We have exactly k ones.
+            if ones == k:
+                # Remove leading zeros to make this window as short
+                # as possible while keeping k ones.
+                while s[left] == '0':
+                    left += 1
+
+                candidate = s[left:right + 1]
+
+                if not ans or len(candidate) < len(ans):
+                    ans = candidate
+                elif len(candidate) == len(ans) and candidate < ans:
+                    ans = candidate
+
+        return ans
