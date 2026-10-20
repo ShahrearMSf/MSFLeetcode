@@ -1,0 +1,61 @@
+
+class Solution:
+    def sortableIntegers(self, nums: list[int]) -> int:
+        n = len(nums)
+
+        # prefix[i] = number of descents at positions < i
+        # A descent occurs when nums[i] > nums[i + 1].
+        prefix = [0] * n
+        last_descent = [-1] * n
+
+        last = -1
+        for i in range(1, n):
+            prefix[i] = prefix[i - 1] + (nums[i - 1] > nums[i])
+            if nums[i - 1] > nums[i]:
+                last = i - 1
+            last_descent[i] = last
+
+        ans = 0
+
+        for k in range(1, n + 1):
+            if n % k:
+                continue
+
+            valid = True
+            prev_max = None
+
+            for l in range(0, n, k):
+                r = l + k
+
+                # Count descents inside this block.
+                internal = prefix[r - 1] - prefix[l]
+
+                # Include the circular boundary.
+                wrap = nums[r - 1] > nums[l]
+
+                # A cyclically sortable block has at most one descent.
+                if internal + wrap > 1:
+                    valid = False
+                    break
+
+                # Determine the minimum and maximum after sorting
+                # this block using a cyclic rotation.
+                if internal == 1:
+                    d = last_descent[r - 1]
+                    block_min = nums[d + 1]
+                    block_max = nums[d]
+                else:
+                    block_min = nums[l]
+                    block_max = nums[r - 1]
+
+                # Independently sorted blocks must also join in order.
+                if prev_max is not None and prev_max > block_min:
+                    valid = False
+                    break
+
+                prev_max = block_max
+
+            if valid:
+                ans += k
+
+        return ans
