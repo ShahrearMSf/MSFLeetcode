@@ -1,0 +1,66 @@
+
+class Solution {
+public:
+    vector<int> findSubtreeSizes(vector<int>& parent, string s) {
+        int n = parent.size();
+
+        vector<vector<int>> children(n);
+
+        // Build the original tree.
+        for (int i = 1; i < n; i++) {
+            children[parent[i]].push_back(i);
+        }
+
+        vector<int> newParent = parent;
+
+        // Store the nearest ancestor for each character
+        // during DFS of the original tree.
+        vector<int> last(26, -1);
+
+        function<void(int)> findNewParents = [&](int node) {
+            int c = s[node] - 'a';
+
+            int previous = last[c];
+
+            // Find the nearest ancestor with the same character.
+            if (previous != -1) {
+                newParent[node] = previous;
+            }
+
+            // Update the nearest ancestor for this character.
+            last[c] = node;
+
+            // Process children in the original tree.
+            for (int child : children[node]) {
+                findNewParents(child);
+            }
+
+            // Backtrack: restore the previous ancestor.
+            last[c] = previous;
+        };
+
+        findNewParents(0);
+
+        // Build the final tree using the new parents.
+        vector<vector<int>> finalChildren(n);
+
+        for (int i = 1; i < n; i++) {
+            finalChildren[newParent[i]].push_back(i);
+        }
+
+        vector<int> answer(n, 1);
+
+        // Calculate subtree sizes in the final tree.
+        function<int(int)> calculateSize = [&](int node) {
+            for (int child : finalChildren[node]) {
+                answer[node] += calculateSize(child);
+            }
+
+            return answer[node];
+        };
+
+        calculateSize(0);
+
+        return answer;
+    }
+};
