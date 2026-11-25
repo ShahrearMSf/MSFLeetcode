@@ -1,0 +1,43 @@
+
+class Solution {
+public:
+    int minLength(vector<int>& nums) {
+        int n = nums.size();
+
+        vector<int> freq(100001, 0);
+
+        for (int x : nums) {
+            freq[x]++;
+        }
+
+        for (int x : nums) {
+            if (freq[x] == 1) {
+                return 1;
+            }
+        }
+
+        // Since every element occurs at least twice,
+        // check subarray lengths from 2 onward.
+        for (int len = 2; len <= n; len++) {
+            unordered_map<string, int> count;
+
+            for (int i = 0; i + len <= n; i++) {
+                string key;
+
+                for (int j = i; j < i + len; j++) {
+                    key += to_string(nums[j]) + ",";
+                }
+
+                count[key]++;
+            }
+
+            for (auto& [key, value] : count) {
+                if (value == 1) {
+                    return len;
+                }
+            }
+        }
+
+        return n;
+    }
+};
